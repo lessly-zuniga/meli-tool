@@ -1,7 +1,7 @@
 import { AmazonAction, SET_AMAZON_ERROR, SET_AMAZON_PRODUCTS } from '../types/amazonTypes';
 
 interface AmazonState {
-  products: any[]; // Aquí puedes especificar el tipo correcto para la matriz de productos
+  products: any[];
   error: string;
 }
 
