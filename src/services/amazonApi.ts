@@ -23,26 +23,6 @@ interface FirebaseData {
   timestamp: any;
 }
 
-
-export const fetchAmazonData = async (asinList: string[]) => {
-  try {
-    const response = await axios.get(BOT_PREFIX, {
-      params: {
-        asins: asinList.join(','),
-        locale: 'US',
-      },
-      headers: {
-        'X-RapidAPI-Key': KEY,
-        'X-RapidAPI-Host': HOST,
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    throw new Error('Failed to fetch Amazon data');
-  }
-};
-
 export const fetchFirebaseProducts = async (): Promise<FirebaseProduct[]> => {
   try {
     const docRef = firestore.collection('products').doc('productData');
@@ -51,12 +31,30 @@ export const fetchFirebaseProducts = async (): Promise<FirebaseProduct[]> => {
     if (docSnapshot.exists) {
       const data = docSnapshot.data() as FirebaseData;
       return data.products;
-    } else {
-      console.error('El documento "productsData" no existe en la colección "products".');
-      return [];
     }
+    console.error('El documento "productsData" no existe en la colección "products".');
+    return [];
   } catch (error) {
     console.error('Error al obtener los productos de Firebase:', error);
     return [];
+  }
+};
+
+export const fetchAmazonData = async (asinList: string[]) => {
+  try {
+    const response = await axios.get(BOT_PREFIX, {
+      params: {
+        asins: asinList.join(','),
+        locale: 'US'
+      },
+      headers: {
+        'X-RapidAPI-Key': KEY,
+        'X-RapidAPI-Host': HOST
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch Amazon data');
   }
 };

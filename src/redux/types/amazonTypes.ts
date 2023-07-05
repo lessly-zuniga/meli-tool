@@ -1,17 +1,14 @@
-export enum AmazonActionTypes {
-    SET_AMAZON_PRODUCTS = 'SET_AMAZON_PRODUCTS',
-    SET_AMAZON_ERROR = 'SET_AMAZON_ERROR',
-  }
-  
+export const SET_AMAZON_PRODUCTS = 'SET_AMAZON_PRODUCTS';
+export const SET_AMAZON_ERROR = 'SET_AMAZON_ERROR';
+
   interface SetAmazonProductsAction {
-    type: AmazonActionTypes.SET_AMAZON_PRODUCTS;
-    payload: any; // Define el tipo de los datos de los productos de Amazon
+    type: typeof SET_AMAZON_PRODUCTS;
+    payload: any;
   }
-  
+
   interface SetAmazonErrorAction {
-    type: AmazonActionTypes.SET_AMAZON_ERROR;
-    payload: string; // Define el tipo del mensaje de error
+    type: typeof SET_AMAZON_ERROR;
+    payload: any;
   }
-  
-  export type AmazonAction = SetAmazonProductsAction | SetAmazonErrorAction;
-  
+
+export type AmazonAction = SetAmazonProductsAction | SetAmazonErrorAction;
