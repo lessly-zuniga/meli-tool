@@ -1,4 +1,4 @@
-import { AmazonActionTypes, AmazonAction } from '../types/amazonTypes';
+import { AmazonAction, SET_AMAZON_ERROR, SET_AMAZON_PRODUCTS } from '../types/amazonTypes';
 
 interface AmazonState {
   products: any[]; // Aquí puedes especificar el tipo correcto para la matriz de productos
@@ -7,21 +7,21 @@ interface AmazonState {
 
 const initialState: AmazonState = {
   products: [],
-  error: '',
+  error: ''
 };
 
 const amazonReducer = (state = initialState, action: AmazonAction): AmazonState => {
   switch (action.type) {
-    case AmazonActionTypes.SET_AMAZON_PRODUCTS:
+    case SET_AMAZON_PRODUCTS:
       return {
         ...state,
         products: action.payload,
-        error: '',
+        error: ''
       };
-    case AmazonActionTypes.SET_AMAZON_ERROR:
+    case SET_AMAZON_ERROR:
       return {
         ...state,
-        error: action.payload,
+        error: action.payload
       };
     default:
       return state;
