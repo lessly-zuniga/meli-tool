@@ -35,29 +35,27 @@ const ProductListController: React.FC = () => {
     fetchProducts();
   }, []);
 
-  const filterValidProducts = (response: any[]): AmazonProduct[] => {
-    return response.filter((product) => product?.asin?.trim() !== '');
-  };
+  const filterValidProducts = (response: AmazonProduct[]) => response.filter((product) => product?.asin?.trim() !== '');
 
   const updateProductInFirebase = (
     existingProduct: FirebaseProduct,
     newProduct: FirebaseProduct
   ): FirebaseProduct => {
     if (
-      newProduct &&
-      existingProduct.current_price !== newProduct.current_price &&
-      typeof newProduct.current_price === 'number'
+      newProduct
+      && existingProduct.current_price !== newProduct.current_price
+      && typeof newProduct.current_price === 'number'
     ) {
       const updatedProduct = {
         ...existingProduct,
-        current_price: newProduct.current_price,
+        current_price: newProduct.current_price
       };
 
       firestore
         .collection('products')
         .doc('productData')
         .update({
-          'products': { ...newProduct, current_price: newProduct.current_price }
+          products: { ...newProduct, current_price: newProduct.current_price }
         })
         .then(() => {
           console.log(`Producto actualizado en Firebase: ASIN ${existingProduct.asin}`);
@@ -82,9 +80,8 @@ const ProductListController: React.FC = () => {
           const sameProductAsin = formattedProducts.find((product) => product.asin === existingProduct.asin);
           if (sameProductAsin && existingProduct.current_price !== sameProductAsin.current_price) {
             return updateProductInFirebase(existingProduct, sameProductAsin);
-          } else {
-            return existingProduct;
           }
+          return existingProduct;
         });
 
         const firebaseData: FirebaseData = {
@@ -92,7 +89,7 @@ const ProductListController: React.FC = () => {
           currency: '$',
           products: updatedProducts,
           status: 'active',
-          timestamp: new Date(),
+          timestamp: new Date()
         };
 
         firestore
