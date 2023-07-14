@@ -24,8 +24,8 @@ const mockData = [{
 }];
 
 const ProductListScreen = ({ handleUpdateAmazonResponse }: ProductListScreenProps) => {
-  const [asinList, setAsinList] = useState<string[]>([]);
-  const [Amazonproducts, setAmazonProducts] = useState<any[]>([]);
+  // const [asinList, setAsinList] = useState<string[]>([]);
+  const [amazonproducts, setAmazonProducts] = useState<any[]>(mockData);
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,19 +34,20 @@ const ProductListScreen = ({ handleUpdateAmazonResponse }: ProductListScreenProp
     //       // handleAmazonResponse(response);
     //       setAmazonProducts(response)
     setAmazonProducts(mockData);
-    handleUpdateAmazonResponse(Amazonproducts);
+    handleUpdateAmazonResponse(mockData);
+    console.log(amazonproducts, 'amazonproducts');
   //     })
   //     .catch((e) => {
   //       console.log('error:', e);
   //     });
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setAsinList(value.split(','));
+  const handleInputChange = (event: React.ChangeEvent<{value: string}>) => {
+    // const { value } = event.target;
+    // setAsinList(value.split(','));
   };
 
-  console.log(asinList, 'asinList');
+  console.log(amazonproducts, 'amazonproducts');
   return (
     <div>
       <form onSubmit={handleFormSubmit}>

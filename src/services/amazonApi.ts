@@ -27,7 +27,6 @@ export const fetchFirebaseProducts = async (): Promise<FirebaseProduct[]> => {
   try {
     const docRef = firestore.collection('products').doc('productData');
     const docSnapshot = await docRef.get();
-
     if (docSnapshot.exists) {
       const data = docSnapshot.data() as FirebaseData;
       return data.products;
@@ -37,6 +36,34 @@ export const fetchFirebaseProducts = async (): Promise<FirebaseProduct[]> => {
   } catch (error) {
     console.error('Error al obtener los productos de Firebase:', error);
     return [];
+  }
+};
+
+export const setFirebaseData = async (firebaseData: FirebaseData) => {
+  try {
+    await firestore
+      .collection('products')
+      .doc('productData')
+      .set(firebaseData);
+
+    console.log('Datos guardados en Firebase con set');
+  } catch (error) {
+    console.error('Error al guardar los datos en Firebase:', error);
+    throw error;
+  }
+};
+
+export const updateFirebaseProducts = async (updatedProducts: FirebaseProduct[]) => {
+  try {
+    await firestore
+      .collection('products')
+      .doc('productData')
+      .update({ products: updatedProducts });
+
+    console.log('Datos actualizados en Firebase con update');
+  } catch (error) {
+    console.error('Error al actualizar los datos en Firebase:', error);
+    throw error;
   }
 };
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProductListScreen from './ProductListScreen';
-import { firestore } from '../../../firebaseConfig';
-import { fetchFirebaseProducts } from '../../../services/amazonApi';
+import { fetchFirebaseProducts, setFirebaseData, updateFirebaseProducts } from '../../../services/amazonApi';
 
 interface AmazonProduct {
   asin: string;
@@ -27,86 +26,44 @@ const ProductListController: React.FC = () => {
   const [firebaseProducts, setFirebaseProducts] = useState<FirebaseProduct[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await fetchFirebaseProducts();
-      setFirebaseProducts(products);
-    };
-
     fetchProducts();
   }, []);
 
-  const filterValidProducts = (response: AmazonProduct[]) => response.filter((product) => product?.asin?.trim() !== '');
-
-  const updateProductInFirebase = (
-    existingProduct: FirebaseProduct,
-    newProduct: FirebaseProduct
-  ): FirebaseProduct => {
-    if (
-      newProduct
-      && existingProduct.current_price !== newProduct.current_price
-      && typeof newProduct.current_price === 'number'
-    ) {
-      const updatedProduct = {
-        ...existingProduct,
-        current_price: newProduct.current_price
-      };
-
-      firestore
-        .collection('products')
-        .doc('productData')
-        .update({
-          products: { ...newProduct, current_price: newProduct.current_price }
-        })
-        .then(() => {
-          console.log(`Producto actualizado en Firebase: ASIN ${existingProduct.asin}`);
-        })
-        .catch((error: Error) => {
-          console.error('Error al actualizar el producto en Firebase:', error);
-        });
-
-      return updatedProduct;
-    }
-
-    return existingProduct;
+  const fetchProducts = async () => {
+    const products = await fetchFirebaseProducts();
+    setFirebaseProducts(products);
   };
 
-  const handleUpdateAmazonResponse = (response: AmazonProduct): void => {
-    if (Array.isArray(response) && response.length > 0) {
-      const AmazonProducts = filterValidProducts(response).sort();
-      if (AmazonProducts.length > 0) {
-        const formattedProducts = AmazonProducts;
+  const filterValidProducts = (response: AmazonProduct[]) => response.filter((product) => product?.asin?.trim() !== '');
 
-        const updatedProducts = Object.values(firebaseProducts).map((existingProduct) => {
-          const sameProductAsin = formattedProducts.find((product) => product.asin === existingProduct.asin);
-          if (sameProductAsin && existingProduct.current_price !== sameProductAsin.current_price) {
-            return updateProductInFirebase(existingProduct, sameProductAsin);
+  const handleUpdateAmazonResponse = async (response: AmazonProduct[]): Promise<void> => {
+    try {
+      const validProducts = filterValidProducts(response);
+
+      if (firebaseProducts.length > 0) {
+        const updatedProducts = firebaseProducts.map((existingProduct) => {
+          const matchingProduct = validProducts.find((product) => product.asin === existingProduct.asin);
+
+          if (matchingProduct && existingProduct.current_price !== matchingProduct.current_price) {
+            return { ...existingProduct, current_price: matchingProduct.current_price };
           }
           return existingProduct;
         });
 
+        await updateFirebaseProducts(updatedProducts);
+      } else {
         const firebaseData: FirebaseData = {
           country: 'US',
           currency: '$',
-          products: updatedProducts,
+          products: validProducts,
           status: 'active',
           timestamp: new Date()
         };
 
-        firestore
-          .collection('products')
-          .doc('productData')
-          .set(firebaseData)
-          .then(() => {
-            console.log('Datos actualizados en Firebase');
-          })
-          .catch((error: Error) => {
-            console.error('Error al actualizar los datos en Firebase:', error);
-          });
-      } else {
-        console.error('La respuesta de Amazon no contiene datos válidos.');
+        await setFirebaseData(firebaseData);
       }
-    } else {
-      console.error('La respuesta de Amazon es incorrecta o vacía.');
+    } catch (error) {
+      console.error('Error al actualizar o guardar los datos en Firebase:', error);
     }
   };
 
