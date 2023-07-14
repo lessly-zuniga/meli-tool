@@ -1,26 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ProductListScreen from './ProductListScreen';
 import { fetchFirebaseProducts, setFirebaseData, updateFirebaseProducts } from '../../../services/amazonApi';
-
-interface AmazonProduct {
-  asin: string;
-  product_name: string;
-  current_price: number;
-  is_prime: boolean;
-  image_url: string;
-  locale: string;
-  currency_symbol: string;
-}
+// import { postMercadoLibreListing } from '../../../services/meliApi';
+import { AmazonProduct, FirebaseData } from '../../../services/types';
 
 interface FirebaseProduct extends AmazonProduct {}
-
-interface FirebaseData {
-  country: string;
-  currency: string;
-  products: FirebaseProduct[];
-  status: string;
-  timestamp: any;
-}
 
 const ProductListController: React.FC = () => {
   const [firebaseProducts, setFirebaseProducts] = useState<FirebaseProduct[]>([]);
@@ -61,6 +45,7 @@ const ProductListController: React.FC = () => {
         };
 
         await setFirebaseData(firebaseData);
+        // await postMercadoLibreListing(validProducts);
       }
     } catch (error) {
       console.error('Error al actualizar o guardar los datos en Firebase:', error);
