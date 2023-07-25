@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProductList from '../../../components/productList/ProductList';
 
 interface ProductListScreenProps {
   handleUpdateAmazonResponse: (response: any) => void;
@@ -27,8 +28,8 @@ const ProductListScreen = ({ handleUpdateAmazonResponse }: ProductListScreenProp
   // const [asinList, setAsinList] = useState<string[]>([]);
   const [amazonproducts, setAmazonProducts] = useState<any[]>(mockData);
 
-  const handleFormSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleFormSubmit = () => {
+    // event.preventDefault();
     //   dispatch(fetchAmazonProductInfo(asinList))
     //     .then((response) => {
     //       // handleAmazonResponse(response);
@@ -42,18 +43,20 @@ const ProductListScreen = ({ handleUpdateAmazonResponse }: ProductListScreenProp
   //     });
   };
 
-  const handleInputChange = (event: React.ChangeEvent<{value: string}>) => {
-    // const { value } = event.target;
-    // setAsinList(value.split(','));
-  };
+  // const handleInputChange = (event: React.ChangeEvent<{value: string}>) => {
+  //   // const { value } = event.target;
+  //   // setAsinList(value.split(','));
+  // };
 
   console.log(amazonproducts, 'amazonproducts');
   return (
-    <div>
-      <form onSubmit={handleFormSubmit}>
-        <input type="text" onChange={handleInputChange} />
-        <button type="submit">Get Products</button>
-      </form>
+    <div style={{ padding: '5%' }}>
+      {/* <form onSubmit={handleFormSubmit}>
+        <input type="text" onChange={handleInputChange} /> */}
+
+      {/* </form> */}
+
+      <ProductList handleFormSubmit={handleFormSubmit} />
     </div>
   );
 };
